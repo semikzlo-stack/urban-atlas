@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Urban Atlas 1.3 — Gdańsk accessibility lab</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<style>
+:root{--paper:#f6f6f2;--ink:#191e1c;--line:#d9ded8;--muted:#737d78;--accent:#176d4f;--light:#e5f1e8}*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper)}button,input,select{font:inherit}button{cursor:pointer}header{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-bottom:1px solid var(--line);background:#fff}.brand{font-size:17px;letter-spacing:-.7px;font-weight:700}.brand small{font-weight:450;color:var(--muted);margin-left:12px;letter-spacing:0}.tag{font-size:11px;border:1px solid var(--line);padding:8px 12px;border-radius:50px;letter-spacing:.06em;text-transform:uppercase}.shell{height:calc(100vh - 70px);display:grid;grid-template-columns:350px minmax(0,1fr)}aside{background:#fff;overflow:auto;border-right:1px solid var(--line);padding:22px 24px 30px}.kicker{font-size:11px;font-weight:700;letter-spacing:.13em;color:var(--accent);text-transform:uppercase}.head{font-size:27px;line-height:1.08;letter-spacing:-1.25px;margin:10px 0 10px}.sub{font-size:13px;line-height:1.5;color:var(--muted);margin:0 0 22px}.hr{height:1px;background:var(--line);margin:22px 0}.caption{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px}.location{padding:12px 14px;background:var(--paper);border-radius:7px;font-size:13px;display:flex;align-items:center;justify-content:space-between}.buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:9px}.time{background:#f4f6f3;border:1px solid transparent;border-radius:5px;padding:11px 2px;color:var(--muted);font-size:13px}.time.active{background:var(--ink);color:#fff}.action{border:none;border-radius:6px;background:var(--accent);color:white;width:100%;padding:13px 10px;font-size:13px;font-weight:650;margin-top:17px}.action:disabled{opacity:.45;cursor:wait}.outline{width:100%;padding:11px 12px;border:1px solid var(--line);background:white;text-align:left;border-radius:6px;margin-bottom:6px;font-size:12px}.status{padding:12px;background:#f0f5f0;border-radius:6px;font-size:12px;line-height:1.5;margin-top:13px;overflow-wrap:anywhere}.status.error{background:#fff2ee;color:#a03e26}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric{padding:14px;background:var(--paper);border-radius:6px;min-height:85px}.number{font-size:26px;letter-spacing:-1px;font-weight:650;font-variant-numeric:tabular-nums}.mlabel{font-size:11px;color:var(--muted);line-height:1.3;margin-top:5px}.legend{display:flex;flex-wrap:wrap;gap:7px 13px;font-size:11px;color:var(--muted);margin-top:13px}.swatch{display:inline-block;width:14px;height:5px;vertical-align:3px;margin-right:5px;border-radius:5px}main{position:relative;min-width:0}#map{height:100%;width:100%;background:#eceee9}.mapfloat{position:absolute;z-index:1000;top:18px;left:20px;background:white;padding:10px 14px;border:1px solid var(--line);border-radius:7px;max-width:320px;box-shadow:0 5px 22px #14211817}.maptitle{font-size:12px;font-weight:700}.mapdesc{font-size:11px;color:var(--muted);margin-top:4px}.credit{font-size:10px;color:var(--muted);line-height:1.5;margin-top:16px}.leaflet-container{font-family:inherit}.leaflet-popup-content{font-size:12px;line-height:1.5}.redacted{display:none}@media(max-width:850px){header{padding:0 14px;height:58px}.brand small{display:none}.shell{height:auto;display:flex;flex-direction:column-reverse}aside{border-right:0;border-top:1px solid var(--line);max-height:none}#map{height:52vh;min-height:350px}.tag{font-size:9px}main{height:52vh;min-height:350px}}
+.moduleNav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-bottom:24px}.moduleNav button{background:#f5f6f3;border:1px solid var(--line);border-radius:6px;padding:10px 5px;font-size:11px;text-align:left;color:#505a55}.moduleNav button.selected{color:#fff;background:#1a352a;border-color:#1a352a}.extraPanel[hidden]{display:none}.extraPanel select,.extraPanel input[type=number]{width:100%;padding:11px;border:1px solid var(--line);border-radius:5px;background:white;margin-top:5px}.field{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;color:var(--muted);margin:8px 0}.extraPanel .metrics{margin:15px 0}.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;padding:12px 0}.choices label{white-space:nowrap}.breakdown{font-size:12px;line-height:2}.bar{display:inline-block;vertical-align:middle;height:7px;background:#378b68;margin-right:9px}.comparison{font-size:11px;overflow:auto;margin:14px 0}.comparison table{border-collapse:collapse;width:100%;text-align:left}.comparison th,.comparison td{border-bottom:1px solid var(--line);padding:9px 5px}.comparison th{font-weight:600}.muted{color:var(--muted)}@media(max-width:850px){.moduleNav{grid-template-columns:repeat(3,1fr)}}
+</style></head>
+<body><header><div class="brand">URBAN ATLAS <small>/ geospatial research toolkit</small></div><span class="tag">OpenStreetMap · release 1.3 · five modules</span></header><div class="shell"><aside>
+<div class="moduleNav" id="moduleNav"><button data-module="development">01 Застройка</button><button class="selected" data-module="accessibility">02 Доступность</button><button data-module="syntax">03 Space Syntax</button><button data-module="centre">04 Центры</button><button data-module="compare">05 Города</button></div><div id="accessPanel"><div class="kicker">02 / Pedestrian accessibility</div><h1 class="head">Gdańsk<br/>Walking analysis</h1><p class="sub">Выбери точку на карте. Для центра Гданьска доступен сохранённый реальный фрагмент OpenStreetMap, без ожидания внешних серверов. Для полной зоны нужны дополнительные данные.</p>
+<div class="caption">Точка исследования</div><div class="location"><span id="coords">54.3521, 18.6464</span><span style="color:var(--accent)">↗</span></div><div class="hr"></div>
+<div class="caption">Время в пути</div><div class="buttons" id="times"><button class="time" data-t="5">5 мин</button><button class="time" data-t="10">10 мин</button><button class="time active" data-t="15">15 мин</button><button class="time" data-t="20">20 мин</button></div>
+<p class="credit" style="margin-top:8px">Скорость ходьбы: 4,5 км/ч. Расчёт по длине доступных пешеходных участков, без учёта светофоров, рельефа и времени переходов.</p>
+<button class="action" id="analyze">Рассчитать по доступным данным →</button><button class="outline" id="tryLive" style="margin-top:8px">Попробовать полную зону через интернет ↗</button><button class="outline" id="resetCenter">Вернуться к сохранённой зоне Гданьска ↖</button><div class="status" id="status">Для центра Гданьска есть сохранённые реальные улицы (выборка 350 м, 22.10.2026). Можно сразу рассчитать частичный результат. Полная 15-минутная зона требует сети значительно большего радиуса.</div>
+<p class="credit" id="dataCoverage" style="padding:8px 0;margin:4px 0;color:#9a5e2f">Источник: OSM, 22.10.2026. Доступен небольшой центральный фрагмент; результаты не означают полного покрытия города.</p><div class="hr"></div><div class="caption">Результаты</div><div class="metrics"><div class="metric"><div class="number" id="roadLength">—</div><div class="mlabel">км доступных улиц</div></div><div class="metric"><div class="number" id="poiCount">—</div><div class="mlabel">доступных объектов</div></div><div class="metric"><div class="number" id="nodesCount">—</div><div class="mlabel">доступных узлов сети</div></div><div class="metric"><div class="number" id="walkDist">1,13</div><div class="mlabel">км максимального пути</div></div></div>
+<div class="legend"><span><i class="swatch" style="background:#2d9069"></i>Доступные улицы</span><span><i class="swatch" style="background:#d09655"></i>POI</span><span><i class="swatch" style="background:#142f24"></i>Начало</span></div>
+<div class="hr"></div><div class="caption">Экспорт</div><button class="outline" id="exportGeo">↗ Экспорт улиц и POI · GeoJSON</button><button class="outline" id="exportCsv">↗ Таблица доступных объектов · CSV</button><button class="outline" id="exportRaw">↗ Сохранить исходные данные · JSON</button><button class="outline" id="importRaw">↙ Загрузить сохранённый JSON</button><input type="file" id="rawFile" accept=".json,application/json" hidden/><button class="outline" onclick="window.print()">↗ Печать / сохранить PDF</button>
+<p class="credit">Данные: © OpenStreetMap contributors (ODbL), получаем через публичный Overpass API. Покрытие и категории зависят от разметки OSM. Промежуточные точки и объекты в пределах сети считаются приближённо. Не использовать без дополнительной проверки для нормативного транспортного моделирования.</p>
+</div>
+<section class="extraPanel" id="developmentPanel" hidden>
+<div class="kicker">01 / New developments</div><h1 class="head">Застройка<br>и жилой потенциал</h1><p class="sub">Контуры зданий из OSM и оценка вместимости жилой застройки в выбранном радиусе. Год постройки не гарантирован.</p>
+<div class="caption">Радиус выборки</div><select id="buildRadius"><option value="500">500 м</option><option value="1000" selected>1 км</option><option value="1500">1,5 км</option></select>
+<div class="caption" style="margin-top:12px">Допущения модели</div><div class="field"><label>Средняя площадь квартиры, м²<input type="number" id="flatArea" value="65" min="20" max="300"></label><label>Жителей на квартиру<input type="number" id="occupancy" value="2.1" min="0.5" max="8" step="0.1"></label></div>
+<button class="action" id="runBuild">Загрузить здания →</button><div class="status" id="buildStatus">Выбери точку и запусти анализ.</div><div class="metrics" id="buildMetrics"></div><p class="credit">Квартиры оцениваются по площади контура × этажность × доля жилой площади 0,75. Только для зданий с явными residential-тегами. Это не официальная численность квартир или новых жителей; отсутствие года постройки не позволяет автоматически выделить новостройки.</p><button class="outline" id="buildExport">Экспорт зданий · GeoJSON</button>
+</section>
+<section class="extraPanel" id="syntaxPanel" hidden><div class="kicker">03 / Street network</div><h1 class="head">Связанность<br>уличной сети</h1><p class="sub">Исследовательский показатель связности: количество пересечений и достижимых улиц. Не является полноценной axial/segment Space Syntax-моделью.</p><button class="action" id="runSyntax">Рассчитать связность →</button><div class="status" id="syntaxStatus">Расчёт по загруженной сети OpenStreetMap.</div><div class="metrics" id="syntaxMetrics"></div><p class="credit">Цвет сегментов отражает степень вершины сети (число непосредственных соединений), а не официальную интеграцию Space Syntax. Для научного Space Syntax нужны сегментная модель и соответствующие метрики angular choice/integration.</p><button class="outline" id="syntaxExport">Экспорт сегментов · GeoJSON</button></section>
+<section class="extraPanel" id="centrePanel" hidden><div class="kicker">04 / Urban centres</div><h1 class="head">Точки интереса<br>и городские центры</h1><p class="sub">Концентрация доступных POI: питание, культура, торговля и услуги. Не измеряет реальный туристический поток или посещаемость Google.</p><button class="action" id="runCentre">Найти концентрации POI →</button><div class="status" id="centreStatus">Загрузи точки интереса вокруг выбранного места.</div><div class="metrics" id="centreMetrics"></div><div class="caption" style="margin-top:16px">Категории</div><div id="centreBreakdown" class="breakdown"></div><p class="credit">Плотность отображается сеткой ~250 м, а не тепловой картой реального спроса. Это только количество объектов, внесённых в OSM. Население и сезонные туристы требуют внешних официальных данных.</p><button class="outline" id="centreExport">Экспорт POI · CSV</button></section>
+<section class="extraPanel" id="comparePanel" hidden><div class="kicker">05 / City benchmarking</div><h1 class="head">Сравнение<br>городов</h1><p class="sub">Одинаковый запрос POI в радиусе 1 км от заранее заданного центра каждого города. Показатели сопоставимы по методике сбора, но зависят от полноты OSM.</p><div class="choices" id="cityChoices"><label><input type="checkbox" value="Copenhagen" checked> Копенгаген</label><label><input type="checkbox" value="Oslo" checked> Осло</label><label><input type="checkbox" value="Hamburg" checked> Гамбург</label><label><input type="checkbox" value="Rotterdam"> Роттердам</label><label><input type="checkbox" value="Aarhus"> Орхус</label><label><input type="checkbox" value="Malaga"> Малага</label></div><button class="action" id="runCompare">Сравнить выбранные города →</button><div class="status" id="compareStatus">Запросы выполняются последовательно, чтобы не перегружать публичный API.</div><div id="compareTable" class="comparison"></div><p class="credit">Это сравнение POI, не Google-рейтингов и не туристической привлекательности. Центры заданы фиксированными координатами. Неполные или неудачные запросы не заменяются вымышленными числами.</p><button class="outline" id="compareExport">Экспорт сравнения · CSV</button></section>
+</aside><main><div id="map"></div><div class="mapfloat"><div class="maptitle" id="maptitle">Исходная точка · центр Гданьска</div><div class="mapdesc" id="mapdesc">Щёлкни по карте, чтобы перенести точку</div></div></main></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), centerDefault=[54.3521,18.6464];let center=[...centerDefault],minutes=15,raw=null,last=null,roadLayer=null,poiLayer=null;
+const map=L.map('map',{zoomControl:false}).setView(center,14);L.control.zoom({position:'bottomright'}).addTo(map);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',maxZoom:19}).addTo(map);
+// Official Polish GIS services can be reviewed from links below. WMS layer names
+// must be verified against live GetCapabilities before enabling map overlays.
+let point=L.circleMarker(center,{radius:8,color:'#fff',weight:3,fillColor:'#163d2c',fillOpacity:1}).addTo(map);
+map.on('click',e=>{if(pendingAnalysis)pendingAnalysis.abort();center=[e.latlng.lat,e.latlng.lng];point.setLatLng(center);$('coords').textContent=center.map(x=>x.toFixed(5)).join(', ');$('maptitle').textContent='Новая точка исследования';$('mapdesc').textContent='Нажми «Загрузить и рассчитать» для обновления';clearResults();});
+$('times').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;minutes=Number(b.dataset.t);document.querySelectorAll('.time').forEach(el=>el.classList.toggle('active',el===b));$('walkDist').textContent=(minutes*4.5/60).toFixed(2).replace('.',',');if(raw&&raw._center&&haversine(raw._center,center)<1&&(raw._isSnapshot||(raw._radius||0)>=networkRadius()))calculate(raw);else{clearResults();state('Для выбранного времени нужно загрузить сеть заново: нажми «Загрузить и рассчитать».')} });
+function state(msg,error=false){$('status').textContent=msg;$('status').classList.toggle('error',error)}
+function clearResults(){if(coverageLayer){map.removeLayer(coverageLayer);coverageLayer=null}if(roadLayer){map.removeLayer(roadLayer);roadLayer=null}if(poiLayer){map.removeLayer(poiLayer);poiLayer=null}last=null;['roadLength','poiCount','nodesCount'].forEach(k=>$(k).textContent='—')}
+function haversine(a,b){const R=6371000,p=Math.PI/180,dLat=(b[0]-a[0])*p,dLon=(b[1]-a[1])*p,s=Math.sin(dLat/2)**2+Math.cos(a[0]*p)*Math.cos(b[0]*p)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s))}
+function bbox(c,r=1400){const x=r/111320,y=r/(111320*Math.cos(c[0]*Math.PI/180));return [c[0]-x,c[1]-y,c[0]+x,c[1]+y]}
+function networkRadius(){return Math.min(1900,minutes*75+140)}
+function overpassQuery(c,r=networkRadius(),mode='walk'){
+ const b=bbox(c,r).map(x=>x.toFixed(6)).join(',');
+ if(mode==='walk')return `[out:json][timeout:35];way["highway"]["highway"!~"motorway|motorway_link|trunk|trunk_link|construction|proposed|raceway|bus_guideway|platform"](${b});out body geom;`;
+ if(mode==='poi')return `[out:json][timeout:35];(node["amenity"](${b});node["shop"](${b});node["tourism"](${b});node["leisure"="park"](${b}););out body;`;
+ return `[out:json][timeout:35];way["building"](${b});out body geom;`;
+}
+let pendingAnalysis=null,forceLiveNext=false,coverageLayer=null;
+const SNAPSHOT_CENTER=[54.3521,18.6464], SNAPSHOT_RADIUS=350;
+function snapshotLocation(c){return haversine(c,SNAPSHOT_CENTER)<70;}
+async function loadSnapshot(c){
+ const response=await fetch('/data/gdansk-center-walk.json',{cache:'force-cache'});
+ if(!response.ok)throw new Error('Файл сохранённых улиц отсутствует (HTTP '+response.status+'). Проверь папку data в GitHub.');
+ const data=await response.json();
+ if(!Array.isArray(data.elements)||!data.elements.some(e=>e.type==='way'&&e.geometry?.length))throw new Error('Некорректный сохранённый набор OSM.');
+ return {...data,_center:[...c],_radius:SNAPSHOT_RADIUS,_coverageRadius:SNAPSHOT_RADIUS,_isSnapshot:true,_poiMissing:true,_clipBox:bbox(SNAPSHOT_CENTER,SNAPSHOT_RADIUS)};
+}
+$('tryLive').onclick=()=>{forceLiveNext=true;$('analyze').click()};$('resetCenter').onclick=()=>{if(pendingAnalysis)pendingAnalysis.abort();center=[...SNAPSHOT_CENTER];point.setLatLng(center);map.setView(center,15);$('coords').textContent=center.map(x=>x.toFixed(5)).join(', ');$('analyze').click()};
+const abortError=()=>Object.assign(new Error('Загрузка отменена'),{name:'AbortError'});
+async function fetchOverpass(q,opts={}){
+ // The own same-origin API is first, so browser CORS is not required.
+ // On some Vercel accounts external Overpass hosts are blocked: offer a
+ // browser-to-Overpass fallback as an independent network path.
+ const urls=[
+  {label:'сервер Urban Atlas',url:'/api/osm',timeout:41000,proxy:true},
+  {label:'Overpass через браузер',url:'https://overpass.private.coffee/api/interpreter',timeout:16000},
+  {label:'альтернативный Overpass',url:'https://overpass-api.de/api/interpreter',timeout:16000}
+ ];
+ const errors=[];
+ for(let i=0;i<urls.length;i++){
+  const u=urls[i],controller=new AbortController();
+  if(opts.signal?.aborted)throw abortError();
+  const abort=()=>controller.abort();opts.signal?.addEventListener('abort',abort,{once:true});
+  const timer=setTimeout(()=>controller.abort(),u.timeout);
+  try{
+   opts.progress?.(`Загружаю ${opts.mode==='poi'?'объекты':opts.mode==='build'?'здания':'уличную сеть'}: ${u.label} (${i+1}/${urls.length})…`);
+   const response=u.proxy
+    ?await fetch(u.url+'?'+new URLSearchParams({mode:opts.mode||'walk',lat:Number(opts.lat).toFixed(5),lon:Number(opts.lon).toFixed(5),radius:Math.round(Number(opts.radius)),v:'12'}),{signal:controller.signal,headers:{Accept:'application/json'}})
+    :await fetch(u.url,{method:'POST',body:new URLSearchParams({data:q}),signal:controller.signal,headers:{Accept:'application/json'}});
+   if(!response.ok){let detail='';if(u.proxy){try{detail=(await response.json()).error||''}catch{}}throw Error('HTTP '+response.status+(detail?' — '+detail:''))}
+   const obj=await response.json();
+   if(!Array.isArray(obj.elements))throw Error('В ответе нет элементов');
+   if(opts.mode==='walk'&&!obj.elements.some(e=>e.type==='way'))throw Error('Улицы не найдены');
+   return obj;
+  }catch(e){
+   if(opts.signal?.aborted)throw abortError();
+   errors.push(`${u.label}: ${e.name==='AbortError'?'тайм-аут':e.message}`);
+  }finally{clearTimeout(timer);opts.signal?.removeEventListener('abort',abort)}
+ }
+ throw Error('Серверы OSM не ответили. '+errors.join('; '));
+}
+async function loadRoadsAndPoi(c,radius,signal,progress,requestLive=false){
+ // Roads are essential; POIs are optional. Results remain usable if POI fails.
+ if(snapshotLocation(c)&&!requestLive){
+  progress?.('Загружаю сохранённый фрагмент OSM (350 м). Внешний Overpass не нужен…');
+  return await loadSnapshot(c);
+ }
+ const roads=await fetchOverpass(overpassQuery(c,radius,'walk'),{mode:'walk',lat:c[0],lon:c[1],radius,signal,progress});
+ const result={...roads,_center:[...c],_radius:radius,_poiMissing:true,_isSnapshot:false};
+ progress?.('Улицы получены. Рассчитываю маршруты; объекты загружаются отдельно…');
+ return result;
+}
+async function loadPoiInto(result,c,radius,signal,progress){
+ const pois=await fetchOverpass(overpassQuery(c,radius,'poi'),{mode:'poi',lat:c[0],lon:c[1],radius,signal,progress});
+ const seen=new Set(result.elements.map(e=>e.type+'/'+e.id));
+ result.elements.push(...pois.elements.filter(e=>!seen.has(e.type+'/'+e.id)));
+ result._poiMissing=false;
+ return result;
+}
+$('analyze').onclick=async()=>{
+ if(pendingAnalysis){pendingAnalysis.abort();return}
+ clearResults();const controller=new AbortController();pendingAnalysis=controller;const requestedLive=forceLiveNext;forceLiveNext=false;
+ $('analyze').textContent='Отменить загрузку';
+ try{
+  const c=[...center],radius=networkRadius();
+  const data=await loadRoadsAndPoi(c,radius,controller.signal,msg=>state(msg),requestedLive);
+  if(controller.signal.aborted)throw abortError();
+  raw=data;
+  if(haversine(c,center)>2){state('Точка изменилась. Повтори расчёт.');return}
+  calculate(data);
+  if(data._isSnapshot){state('ЧАСТИЧНЫЙ РАСЧЁТ: реальные улицы внутри 350 м вокруг центра. Для выбранных '+minutes+' минут это НЕ полная зона доступности; POI не загружены. Нажми «Попробовать полную зону» для сетевого запроса.',true);return}
+  try{
+   await loadPoiInto(data,c,radius,controller.signal,msg=>state(msg));
+   if(controller.signal.aborted)throw abortError();
+   calculate(data);
+  }catch(poiError){
+   if(controller.signal.aborted)throw abortError();
+   state('Уличная сеть рассчитана. Объекты POI недоступны: '+poiError.message+'. На карте показаны только подтверждённые улицы.',true);
+  }
+ }catch(e){
+  if(e.name==='AbortError'){state('Загрузка отменена.');}
+  else if(snapshotLocation(center)){
+   try{const sample=await loadSnapshot(center);raw=sample;calculate(sample);state('Сетевой запрос не удался ('+e.message+'). Показан ЧАСТИЧНЫЙ результат по сохранённому реальному фрагменту OSM (350 м). Это не полный 15-минутный охват.',true)}
+   catch(err){state('Ошибка загрузки: '+e.message+'; резервный набор: '+err.message,true)}
+  } else {state('Ошибка загрузки: '+e.message+'; сохранённые данные доступны только для центра Гданьска (54.3521, 18.6464).',true)}
+ }finally{pendingAnalysis=null;$('analyze').textContent='Рассчитать по доступным данным →'}
+};
+function walkable(t){const h=t.highway;if(!h)return false;if(t.access==='private'||t.access==='no'||t.foot==='private'||t.foot==='no')return false;if(['motorway','motorway_link','trunk','trunk_link','construction','proposed','raceway','bus_guideway','platform'].includes(h))return false;if(['cycleway','bridleway'].includes(h)&&t.foot!=='yes'&&t.foot!=='designated')return false;if(t.sidewalk==='no'&&['primary','secondary','tertiary'].includes(h)&&t.foot!=='yes')return false;return true}
+class Heap{constructor(){this.a=[]}push(x){let a=this.a;a.push(x);let i=a.length-1;while(i>0){let p=(i-1)>>1;if(a[p][0]<=x[0])break;a[i]=a[p];i=p}a[i]=x}pop(){let a=this.a,top=a[0],x=a.pop();if(a.length){let i=0;while(2*i+1<a.length){let j=i*2+1;if(j+1<a.length&&a[j+1][0]<a[j][0])j++;if(a[j][0]>=x[0])break;a[i]=a[j];i=j}a[i]=x}return top}get length(){return this.a.length}}
+function build(data){const nodes=new Map(),ways=[],pois=[];
+ // "out body geom" returns road-node IDs plus their geometry without the
+ // expensive follow-up query for every node. Reconstruct the same graph here.
+ for(const e of data.elements){if(e.type==='way'&&Array.isArray(e.nodes)&&Array.isArray(e.geometry)){
+  e.nodes.forEach((id,i)=>{const p=e.geometry[i];if(p&&Number.isFinite(p.lat)&&Number.isFinite(p.lon))nodes.set(id,[p.lat,p.lon])});
+ }}
+ for(const e of data.elements){if(e.type==='node'&&typeof e.lat==='number'){nodes.set(e.id,[e.lat,e.lon]);if(e.tags&&classify(e.tags))pois.push({id:`node/${e.id}`,coord:[e.lat,e.lon],category:classify(e.tags),name:e.tags.name||e.tags['name:en']||'Без названия',tags:e.tags});}else if(e.type==='way'&&e.tags&&walkable(e.tags))ways.push(e)}const adj=new Map(),edges=[];function connect(a,b,d){if(!adj.has(a))adj.set(a,[]);adj.get(a).push([b,d])}for(const w of ways){for(let i=1;i<w.nodes.length;i++){const a=w.nodes[i-1],b=w.nodes[i],ca=nodes.get(a),cb=nodes.get(b);if(!ca||!cb)continue;
+ if(data._clipBox&&(ca[0]<data._clipBox[0]||ca[0]>data._clipBox[2]||ca[1]<data._clipBox[1]||ca[1]>data._clipBox[3]||cb[0]<data._clipBox[0]||cb[0]>data._clipBox[2]||cb[1]<data._clipBox[1]||cb[1]>data._clipBox[3]))continue;
+ const d=haversine(ca,cb);if(d<0.01||d>1000)continue;connect(a,b,d);connect(b,a,d);edges.push([a,b,d])}}return {nodes,adj,edges,pois,ways}}
+function classify(t){if(t.amenity)return t.amenity;if(t.tourism)return t.tourism;if(t.shop)return 'shop';if(t.leisure==='park')return 'park';return null}
+function closest(nodes,c){let best=null,bestD=Infinity;for(const [id,p] of nodes){const d=haversine(p,c);if(d<bestD){bestD=d;best=id}}return {id:best,d:bestD}}
+function dijkstra(adj,source,max){const d=new Map([[source,0]]),heap=new Heap();heap.push([0,source]);while(heap.length){const [v,u]=heap.pop();if(v!==d.get(u))continue;if(v>max)break;for(const [to,w] of adj.get(u)||[]){const nd=v+w;if(nd<=max&&nd<(d.get(to)??Infinity)){d.set(to,nd);heap.push([nd,to])}}}return d}
+function interp(a,b,f){return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]}
+function roadFeatures(g,dist,max){
+ let length=0;const features=[];
+ for(const [a,b,w] of g.edges){
+  const da=dist.get(a)??Infinity,db=dist.get(b)??Infinity;
+  if(!Number.isFinite(w)||w<=0||(!Number.isFinite(da)&&!Number.isFinite(db)))continue;
+  const left=Math.max(0,Math.min(w,max-da)),right=Math.max(0,Math.min(w,max-db));
+  if(left<=0&&right<=0)continue;
+  const p=g.nodes.get(a),q=g.nodes.get(b);if(!p||!q)continue;
+  const segments=left+right>=w?[[0,1]]:[[0,left/w],[1-right/w,1]];
+  for(const [from,to] of segments){if(to-from<=1e-10)continue;
+   const c1=interp(p,q,from),c2=interp(p,q,to),meters=w*(to-from);
+   length+=meters;
+   features.push({type:'Feature',geometry:{type:'LineString',coordinates:[[c1[1],c1[0]],[c2[1],c2[0]]]},properties:{length_m:+meters.toFixed(2)}});
+  }
+ }
+ return {features,length};
+}
+function spatialIndex(nodes){const s=new Map(),size=.002;for(const [id,p] of nodes){const k=Math.floor(p[0]/size)+','+Math.floor(p[1]/size);if(!s.has(k))s.set(k,[]);s.get(k).push([id,p])}return {s,size}}
+function nearby(index,p){const {s,size}=index,y=Math.floor(p[0]/size),x=Math.floor(p[1]/size);let min=Infinity,id=null;for(let range=0;range<=3;range++){for(let i=-range;i<=range;i++)for(let j=-range;j<=range;j++){if(range>0&&Math.max(Math.abs(i),Math.abs(j))!==range)continue;for(const [k,c] of s.get((y+i)+','+(x+j))||[]){const d=haversine(p,c);if(d<min){min=d;id=k}}}const latitudeMeters=size*111000,longitudeMeters=latitudeMeters*Math.cos(p[0]*Math.PI/180);const lower=Math.min(latitudeMeters,longitudeMeters)*range;if(id!==null&&min<lower)break}return {id,d:min}}
+function calculate(data){clearResults();state('Считаю кратчайшие пути по дорожной сети…');try{const g=build(data),start=closest(new Map([...g.adj.keys()].map(k=>[k,g.nodes.get(k)])),center),max=minutes*75;if(start.id===null||start.d>200){state('Рядом с точкой нет пешеходной улицы (менее 200 м). Выбери другое место.',true);return}const networkBudget=Math.max(0,max-start.d),dist=dijkstra(g.adj,start.id,networkBudget),road=roadFeatures(g,dist,networkBudget),index=spatialIndex(new Map([...g.adj.keys()].map(k=>[k,g.nodes.get(k)])));const visible=[];for(const p of g.pois){const nearest=nearby(index,p.coord);if(nearest.d>100)continue;const d=(dist.get(nearest.id)??Infinity)+nearest.d;if(d+start.d<=max)visible.push({...p,distance:Math.round(d+start.d),walkMin:+((d+start.d)/75).toFixed(1)})}const features=[...road.features,...visible.map(p=>({type:'Feature',geometry:{type:'Point',coordinates:[p.coord[1],p.coord[0]]},properties:{name:p.name,category:p.category,walk_min:p.walkMin,distance_m:p.distance,osm_id:p.id}}))];last={road,visible,features,center:[...center],minutes,reachableNodes:dist.size,max,start};roadLayer=L.geoJSON(road.features,{style:{color:'#288761',weight:4,opacity:.82}}).addTo(map);poiLayer=L.layerGroup(visible.map(p=>L.circleMarker(p.coord,{radius:4,weight:1,color:'#fff',fillColor:'#c17c35',fillOpacity:.85}).bindPopup(`<b>${escapeHtml(p.name)}</b><br>${escapeHtml(p.category)} · ≈${p.walkMin} мин`))).addTo(map);$('roadLength').textContent=(road.length/1000).toFixed(1).replace('.',',');$('poiCount').textContent=data._poiMissing?'—':visible.length.toLocaleString('ru');$('nodesCount').textContent=dist.size.toLocaleString('ru');$('walkDist').textContent=(max/1000).toFixed(2).replace('.',',');$('maptitle').textContent=data._isSnapshot?'Частичная уличная сеть · Гданьск':`${minutes} минут пешком · Гданьск`;$('mapdesc').textContent=data._isSnapshot?`${(road.length/1000).toFixed(1)} км доступных сегментов в выборке 350 м · OSM 22.10.2026`:`${(road.length/1000).toFixed(1)} км улиц · ${data._poiMissing?'объекты недоступны':visible.length+' объектов'} · OpenStreetMap`;state(`${data._isSnapshot?'ЧАСТИЧНАЯ ВЫБОРКА (350 м), полная зона НЕ рассчитана.':data._poiMissing?'Улицы рассчитаны, загружаю объекты.':'Готово.'} Просчитано ${g.edges.length.toLocaleString('ru')} дорожных сегментов; ближайшая вершина в ${Math.round(start.d)} м от точки. Учтены только объекты, внесённые в OpenStreetMap. Зона показана как достижимые уличные участки, не как неточный круг.`);if(data._clipBox){const b=data._clipBox;coverageLayer=L.geoJSON({type:'Feature',geometry:{type:'Polygon',coordinates:[[[b[1],b[0]],[b[3],b[0]],[b[3],b[2]],[b[1],b[2]],[b[1],b[0]]]]}},{style:{color:'#bb7948',weight:2,dashArray:'5 6',fillColor:'#bb7948',fillOpacity:.025}}).addTo(map)}
+ if(road.features.length){const bounds=roadLayer.getBounds();if(bounds.isValid())map.fitBounds(bounds.pad(.2),{maxZoom:15})}}catch(e){state('Ошибка расчёта: '+e.message,true)}}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function download(name,body,mime){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([body],{type:mime}));a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)}
+function required(){if(!last){state('Сначала выполни расчёт.',true);return false}return true}
+$('exportGeo').onclick=()=>{if(required())download('gdansk-walk-'+minutes+'min.geojson',JSON.stringify({type:'FeatureCollection',features:last.features},null,2),'application/geo+json')};
+$('exportCsv').onclick=()=>{if(!required())return;const rows=[['name','category','walk_minutes','distance_m','osm_id'],...last.visible.map(p=>[p.name,p.category,p.walkMin,p.distance,p.id])];download('gdansk-poi-'+minutes+'min.csv','\ufeff'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n'),'text/csv;charset=utf-8')};
+$('exportRaw').onclick=()=>{if(!raw){state('Сначала загрузи данные OpenStreetMap.',true);return}download('gdansk-osm-source.json',JSON.stringify(raw),'application/json')};$('importRaw').onclick=()=>$('rawFile').click();$('rawFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data.elements))throw Error('В файле нет массива elements');
+ if(!Array.isArray(data._center))data._center=[...center];
+ data._poiMissing=!data.elements.some(e=>e.type==='node'&&e.tags);
+ data._isSnapshot=data._isSnapshot||false;raw=data;center=[...data._center];point.setLatLng(center);map.setView(center,14);$('coords').textContent=center.map(x=>x.toFixed(5)).join(', ');calculate(data)}catch(err){state('Не удалось прочитать файл: '+err.message,true)}e.target.value=''};
+
+// 5-module extension — independent optional OSM layers, no fabricated external statistics.
+let activeModule='accessibility',extraLayer=null,buildData=null,syntaxData=null,centreData=null,compareData=[];
+const moduleNames={development:'Застройка',accessibility:'Доступность',syntax:'Связанность улиц',centre:'Городские центры',compare:'Сравнение городов'};
+function extraClear(){if(extraLayer){map.removeLayer(extraLayer);extraLayer=null}}
+function switchModule(name){activeModule=name;document.querySelectorAll('#moduleNav button').forEach(b=>b.classList.toggle('selected',b.dataset.module===name));$('accessPanel').hidden=name!=='accessibility';for(const n of ['development','syntax','centre','compare'])$(n+'Panel').hidden=n!==name;extraClear();if(roadLayer)map.removeLayer(roadLayer);if(poiLayer)map.removeLayer(poiLayer);if(name==='accessibility'){if(roadLayer)roadLayer.addTo(map);if(poiLayer)poiLayer.addTo(map)}$('maptitle').textContent=moduleNames[name]+' · Gdańsk';$('mapdesc').textContent='Выбери точку и выполни анализ';}
+$('moduleNav').onclick=e=>{const b=e.target.closest('[data-module]');if(b)switchModule(b.dataset.module)};
+const metricHtml=(items)=>items.map(([value,label])=>`<div class="metric"><div class="number">${value}</div><div class="mlabel">${label}</div></div>`).join('');
+const formNum=id=>Number($(id).value);
+function xy(c){return [c[1],c[0]]}
+function planarArea(coords){if(coords.length<3)return 0;const latitude=coords.reduce((s,c)=>s+c[1],0)/coords.length, longitude=coords.reduce((s,c)=>s+c[0],0)/coords.length, mx=111320*Math.cos(latitude*Math.PI/180),my=111320;let twice=0;for(let i=0;i<coords.length;i++){const p=coords[i],q=coords[(i+1)%coords.length];twice+=((p[0]-longitude)*mx)*((q[1]-latitude)*my)-((q[0]-longitude)*mx)*((p[1]-latitude)*my)}return Math.abs(twice/2)}
+function valueFmt(n){return Math.round(n).toLocaleString('ru')}
+function featuresCollection(fs){return {type:'FeatureCollection',features:fs}}
+async function buildingLoad(){let r=formNum('buildRadius'),b=bbox(center,r).map(x=>x.toFixed(6)).join(',');const q=overpassQuery(center,r,"build");const data=await fetchOverpass(q,{mode:'build',lat:center[0],lon:center[1],radius:r,progress:msg=>$('buildStatus').textContent=msg});return data.elements.filter(e=>e.type==='way'&&e.geometry?.length>=4)}
+$('runBuild').onclick=async()=>{$('runBuild').disabled=true;$('buildStatus').textContent='Загружаю здания из OSM…';extraClear();try{const buildings=await buildingLoad(),r=formNum('buildRadius'),flatArea=formNum('flatArea'),occ=formNum('occupancy');if(!(flatArea>0&&occ>0))throw Error('Проверь ввод площади и жителей');let housing=0,area=0,flats=0,dated=0,residential=0;const fs=[];for(const b of buildings){const t=b.tags||{},ring=b.geometry.map(x=>[x.lon,x.lat]);if(haversine(center,[b.geometry[0].lat,b.geometry[0].lon])>r)continue;const sq=planarArea(ring),levels=Number(t['building:levels'])||3;const residentialTag=['apartments','residential','house','detached','terrace','semidetached_house','dormitory'].includes(t.building);const units=Number(t['building:flats'])||((residentialTag)?Math.max(1,Math.round(sq*levels*.75/flatArea)):0);if(residentialTag){housing++;flats+=units;residential++}area+=sq;if(t['start_date']||t['building:year']||t['construction_date'])dated++;fs.push({type:'Feature',geometry:{type:'Polygon',coordinates:[ring]},properties:{osm_id:b.id,building:t.building,area_m2:Math.round(sq),levels,flats_estimate:units,residential:residentialTag,year:t.start_date||t['building:year']||null}})}buildData=fs;extraLayer=L.geoJSON(featuresCollection(fs),{style:f=>({color:'#fff',weight:.55,fillColor:f.properties.residential?'#cb7653':'#7c8a83',fillOpacity:.70})}).addTo(map);$('buildMetrics').innerHTML=metricHtml([[valueFmt(fs.length),'зданий в выборке'],[valueFmt(residential),'жилых зданий с тегом'],[valueFmt(flats),'оценка квартир'],[valueFmt(flats*occ),'оценка жителей']]);$('buildStatus').textContent=`Готово. Площадь контуров ≈ ${valueFmt(area)} м². Год постройки указан для ${dated} зданий. Оценки квартир/жителей не относятся исключительно к новостройкам.`;if(fs.length)map.fitBounds(extraLayer.getBounds().pad(.1),{maxZoom:15})}catch(e){$('buildStatus').textContent='Ошибка: '+e.message}finally{$('runBuild').disabled=false}};
+$('buildExport').onclick=()=>{if(!buildData){$('buildStatus').textContent='Сначала рассчитай застройку.';return}download('buildings-gdansk.geojson',JSON.stringify(featuresCollection(buildData)),'application/geo+json')};
+async function ensureLocalRaw(includePoi=false){
+ const radius=1700;
+ if(includePoi && snapshotLocation(center) && raw?._isSnapshot)throw new Error('Сохранённый снимок содержит только улицы, без точек интереса. Нужна отдельная выгрузка POI, текущие внешние API недоступны.');
+ if(!includePoi && snapshotLocation(center) && (!raw || haversine(raw._center||[0,0],center)>5)){raw=await loadSnapshot(center);}
+ if(!includePoi && raw?._isSnapshot && haversine(raw._center,center)<5)return raw;
+ if(raw&&raw._center&&haversine(raw._center,center)<5&&(raw._radius||0)>=radius&&(!includePoi||!raw._poiMissing))return raw;
+ let data=raw&&raw._center&&haversine(raw._center,center)<5&&(raw._radius||0)>=radius?raw:await loadRoadsAndPoi(center,radius,null,msg=>{if(activeModule==='syntax')$('syntaxStatus').textContent=msg;else $('centreStatus').textContent=msg});
+ raw=data;
+ if(includePoi){await loadPoiInto(data,center,radius,null,msg=>$('centreStatus').textContent=msg)}
+ return data;
+}
+$('runSyntax').onclick=async()=>{$('runSyntax').disabled=true;$('syntaxStatus').textContent='Считываю уличную сеть и считаю количество соединений…';extraClear();try{const g=build(await ensureLocalRaw()),degrees=new Map();for(const [n,list] of g.adj)degrees.set(n,new Set(list.map(e=>e[0])).size);let intersections=[...degrees.values()].filter(v=>v>=3).length,fs=[];for(const [a,b,d] of g.edges){const k=((degrees.get(a)||0)+(degrees.get(b)||0))/2;fs.push({type:'Feature',geometry:{type:'LineString',coordinates:[xy(g.nodes.get(a)),xy(g.nodes.get(b))]},properties:{length_m:d,mean_degree:k}})}syntaxData=fs;extraLayer=L.geoJSON(featuresCollection(fs),{style:f=>({color:f.properties.mean_degree>=3.5?'#d85f41':f.properties.mean_degree>=2.5?'#e8aa50':'#407f76',weight:2.5,opacity:.82})}).addTo(map);$('syntaxMetrics').innerHTML=metricHtml([[valueFmt(g.edges.length),'сегментов сети'],[valueFmt(intersections),'пересечений (степень ≥ 3)'],[valueFmt(g.adj.size),'узлов сети'],[( [...degrees.values()].reduce((a,b)=>a+b,0)/Math.max(1,degrees.size)).toFixed(2),'средняя степень узла']]);$('syntaxStatus').textContent='Рассчитана топологическая связность. Для полной Space Syntax понадобится отдельная сегментная/angular-модель.'}catch(e){$('syntaxStatus').textContent='Ошибка: '+e.message}finally{$('runSyntax').disabled=false}};
+$('syntaxExport').onclick=()=>{if(syntaxData)download('street-connectivity.geojson',JSON.stringify(featuresCollection(syntaxData)),'application/geo+json');else $('syntaxStatus').textContent='Сначала рассчитай сеть.'};
+function poiCategory(tags){if(tags.tourism==='museum'||tags.tourism==='attraction'||tags.historic)return 'Культура / туризм';if(['restaurant','cafe','bar','pub','fast_food'].includes(tags.amenity))return 'Еда / напитки';if(tags.shop)return 'Торговля';if(['school','university','library','hospital','clinic'].includes(tags.amenity))return 'Социальные объекты';return 'Другие услуги'}
+$('runCentre').onclick=async()=>{$('runCentre').disabled=true;$('centreStatus').textContent='Загружаю городские объекты…';extraClear();try{const d=await ensureLocalRaw(true),points=d.elements.filter(e=>e.type==='node'&&e.tags&&classify(e.tags)&&typeof e.lat==='number');const cells=new Map(),group=new Map(),features=[];let valid=0;for(const p of points){const c=[p.lat,p.lon];if(haversine(center,c)>1700)continue;valid++;const cat=poiCategory(p.tags),k=Math.floor((p.lat-center[0])*111320/250)+','+Math.floor((p.lon-center[1])*111320*Math.cos(center[0]*Math.PI/180)/250);cells.set(k,(cells.get(k)||0)+1);group.set(cat,(group.get(cat)||0)+1);features.push({type:'Feature',geometry:{type:'Point',coordinates:[p.lon,p.lat]},properties:{id:p.id,name:p.tags.name||'',category:cat}})}centreData=features;const layers=[];for(const [k,count] of cells){const [i,j]=k.split(',').map(Number),x=center[1]+j*250/(111320*Math.cos(center[0]*Math.PI/180)),y=center[0]+i*250/111320,w=250/(111320*Math.cos(center[0]*Math.PI/180)),h=250/111320;layers.push(L.rectangle([[y,x],[y+h,x+w]],{color:'#fff',weight:1,fillColor:count>=20?'#bb4d39':count>=8?'#e3a24c':'#62a68c',fillOpacity:.65}).bindPopup(`${count} объектов OSM в ячейке ~250×250 м`))}extraLayer=L.layerGroup(layers).addTo(map);$('centreMetrics').innerHTML=metricHtml([[valueFmt(valid),'точек интереса'],[valueFmt(cells.size),'занятых ячеек'],[valueFmt(Math.max(0,...cells.values())),'максимум на ячейку'],[valueFmt(group.size),'категорий']]);$('centreBreakdown').innerHTML=[...group.entries()].sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div><span class="bar" style="width:${Math.round(100*v/Math.max(1,valid))}px"></span>${escapeHtml(k)}: ${v}</div>`).join('');$('centreStatus').textContent='Распределение POI по ~250-метровым ячейкам; это количество зарегистрированных объектов, не оценка посещаемости.'}catch(e){$('centreStatus').textContent='Ошибка: '+e.message}finally{$('runCentre').disabled=false}};
+$('centreExport').onclick=()=>{if(!centreData){$('centreStatus').textContent='Сначала выполни расчёт.';return}const rows=[['id','name','category','lat','lon'],...centreData.map(f=>[f.properties.id,f.properties.name,f.properties.category,f.geometry.coordinates[1],f.geometry.coordinates[0]])];download('gdansk-centres-poi.csv','\ufeff'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n'),'text/csv')};
+const cityCenters={Gdansk:[54.3521,18.6464],Copenhagen:[55.6761,12.5683],Oslo:[59.9139,10.7522],Hamburg:[53.5503,10.0007],Rotterdam:[51.9244,4.4777],Aarhus:[56.1629,10.2039],Malaga:[36.7213,-4.4214]};
+async function cityPoi(name){const c=cityCenters[name],radius=1000;const q=overpassQuery(c,radius,"poi");const data=await fetchOverpass(q,{mode:'poi',lat:c[0],lon:c[1],radius}),set=new Map();for(const e of data.elements){if(e.type==='node'&&e.tags&&classify(e.tags))set.set(e.id,e)}const groups={};for(const e of set.values()){const cat=poiCategory(e.tags);groups[cat]=(groups[cat]||0)+1}return {name,total:set.size,food:groups['Еда / напитки']||0,shops:groups['Торговля']||0,culture:groups['Культура / туризм']||0,services:groups['Другие услуги']||0}}
+$('runCompare').onclick=async()=>{const names=['Gdansk',...[...document.querySelectorAll('#cityChoices input:checked')].map(x=>x.value)];if(names.length<2){$('compareStatus').textContent='Выбери хотя бы один город для сравнения.';return}$('runCompare').disabled=true;compareData=[];$('compareTable').innerHTML='';for(const name of names){$('compareStatus').textContent='Загружаю '+name+' ('+(compareData.length+1)+'/'+names.length+')…';try{compareData.push(await cityPoi(name))}catch(e){compareData.push({name,error:e.message})}renderComparison()}$('compareStatus').textContent='Готово. Сравнение выполнено по точкам OSM в радиусе 1 км. Ошибки запросов указаны отдельно.';$('runCompare').disabled=false};
+function renderComparison(){$('compareTable').innerHTML='<table><thead><tr><th>Город</th><th>Всего</th><th>Еда</th><th>Торговля</th><th>Культура</th></tr></thead><tbody>'+compareData.map(x=>x.error?`<tr><td>${escapeHtml(x.name)}</td><td colspan="4" class="muted">Ошибка API: ${escapeHtml(x.error)}</td></tr>`:`<tr><td>${escapeHtml(x.name)}</td><td>${x.total}</td><td>${x.food}</td><td>${x.shops}</td><td>${x.culture}</td></tr>`).join('')+'</tbody></table>'}
+$('compareExport').onclick=()=>{if(!compareData.length){$('compareStatus').textContent='Сначала выполни сравнение.';return}const cols=['name','total','food','shops','culture','services','error'];download('cities-poi-benchmark.csv','\ufeff'+[cols.join(','),...compareData.map(x=>cols.map(k=>'"'+String(x[k]??'').replace(/"/g,'""')+'"').join(','))].join('\r\n'),'text/csv')};
+</script>
+<section id="officialStats" style="padding:20px;background:#f4f7f5;border-top:1px solid #d9ded8">
+<div class="kicker">OFFICIAL POLISH DATA / GUS BDL</div>
+<h2 style="font-size:19px;margin:8px 0">Официальная статистика Польши</h2>
+<p class="sub" style="max-width:850px">Получай опубликованные показатели GUS по административной единице и конкретной переменной. Данные нельзя автоматически распределять по кварталам: это агрегированная статистика с указанием года и источника.</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0">
+<label style="font-size:12px">ID единицы GUS <input id="gusUnit" value="" placeholder="Найди ID ниже" style="width:150px;padding:8px;border:1px solid #c6d2c9" /></label>
+<button id="gusFindUnit" class="outline" style="width:auto;padding:9px 15px">Найти Гданьск</button>
+<label style="font-size:12px">ID показателя <input id="gusVariable" placeholder="например 3643" style="width:150px;padding:8px;border:1px solid #c6d2c9" /></label>
+<button id="gusLoad" class="outline" style="width:auto;padding:9px 15px">Загрузить показатель</button>
+</div>
+<div id="gusResults" class="status" aria-live="polite">Сначала нажми «Найти Гданьск», выбери административную единицу, затем укажи числовой ID показателя из каталога GUS.</div>
+<p style="font-size:12px"><a href="https://bdl.stat.gov.pl/bdl/start" target="_blank" rel="noopener">Каталог показателей GUS ↗</a> · <a href="https://api.stat.gov.pl/Home/BdlApi" target="_blank" rel="noopener">Документация API ↗</a></p>
+</section>
+<section style="padding:18px 20px;border-top:1px solid #d9ded8;background:#fff">
+<div class="kicker">Official source connections</div>
+<h2 style="font-size:16px;margin:8px 0">Данные и проверка источников</h2>
+<p class="sub" style="margin-bottom:12px">Автоматические вычисления используют OpenStreetMap. Официальные слои доступны для скачивания или ручной сверки; их нельзя считать автоматически подключёнными к расчётам.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;font-size:12px">
+<a href="https://www.geoportal.gov.pl/pl/dane/ewidencja-gruntow-i-budynkow-egib/" target="_blank" rel="noopener noreferrer">Geoportal EGiB · здания и участки ↗</a>
+<a href="https://mapy.geoportal.gov.pl/wss/service/PZGIK/EGIB/WFS/UslugaZbiorcza?service=WFS&request=GetCapabilities" target="_blank" rel="noopener noreferrer">Кадастровый WFS · метаданные ↗</a>
+<a href="https://bdl.stat.gov.pl/" target="_blank" rel="noopener noreferrer">GUS BDL · демография ↗</a>
+<a href="https://www.gdansk.pl/otwarte-dane-w-gdansku" target="_blank" rel="noopener noreferrer">Gdańsk Open Data · городские данные ↗</a>
+</div>
+<p class="credit" style="margin-top:12px">Официальные данные требуют сопоставления координат, схем и лицензий; только открытие ссылки не добавляет чисел в отчёт. Google Places и данные мобильных операторов не подключены.</p>
+</section>
+<script>
+(function(){
+ const el=id=>document.getElementById(id), output=el('gusResults');
+ const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ async function api(query){const r=await fetch('/api/gus?'+new URLSearchParams(query));const j=await r.json();if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j}
+ el('gusFindUnit').addEventListener('click',async()=>{output.textContent='Ищу административные единицы Gdańsk в GUS…';try{const j=await api({action:'units',name:'Gdańsk'});const items=j.results||[];if(!items.length)throw Error('Единицы не найдены. Попробуй проверить доступность GUS API.');output.innerHTML=items.slice(0,15).map(x=>'<div style="margin:7px 0"><button class="gusChoose" data-id="'+safe(x.id)+'" style="padding:4px 8px;margin-right:8px">Выбрать</button>'+safe(x.name)+' — '+safe(x.id)+' (level '+safe(x.level||'—')+')</div>').join('');output.querySelectorAll('.gusChoose').forEach(b=>b.onclick=()=>{el('gusUnit').value=b.dataset.id;output.textContent='Выбрана единица '+b.dataset.id+'. Введи ID показателя и нажми «Загрузить показатель».'})}catch(e){output.textContent='Не удалось найти единицы: '+e.message}});
+ el('gusLoad').addEventListener('click',async()=>{const unit=el('gusUnit').value.trim(),variable=el('gusVariable').value.trim();if(!/^\d{6,16}$/.test(unit)||!/^\d{1,9}$/.test(variable)){output.textContent='Нужны числовые ID единицы и показателя (GUS).';return}output.textContent='Запрашиваю официальный ряд GUS…';try{const [j,meta]=await Promise.all([api({action:'data',unit,variable}),api({action:'variable',variable}).catch(()=>({}))]);let sets=j.results||[];output.innerHTML='<strong>GUS BDL: '+safe(meta.variable?.name||('variable '+variable))+' · unit '+safe(unit)+'</strong><div style="margin-top:8px">'+(sets.length?sets.map(x=>'<div>'+safe(x.year)+': <strong>'+safe(x.val??'нет данных')+'</strong>'+ (x.attrId?' · '+safe(x.attrId):'')+'</div>').join(''):'Нет опубликованных значений для этой пары ID')+'</div><p style="font-size:11px">Государственная статистика. Точная интерпретация и единицы измерения — в каталоге переменной GUS.</p>'}catch(e){output.textContent='Не удалось получить показатели: '+e.message}});
+})();
+</script>
+</body></html>
